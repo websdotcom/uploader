@@ -1,53 +1,59 @@
 (function($){
     $.uploader = function(el, options){
-        var self = this == window ? {} : this;
-        self.$el = $(el);
-        self.el = el;
+        if(this == window) return new $.uploader(el, options);
+
+        this.$el = $(el);
+        this.el = el;
 
         // Add a reverse reference to the DOM object
-        self.$el.data("uploader", self);
+        this.$el.data("uploader", this);
 
-        self.init = function(){
-            self.options = $.extend(true, {},$.uploader.defaultOptions, options);
-			self.inputs = [];
-			self.addLabel = $("<label>")
+        this.init(options);
+		return this;
+	}
+	
+	$.extend($.uploader.prototype, {
+		init: function(options){
+			var self = this; 
+	    	this.options = $.extend(true, {},$.uploader.defaultOptions, options);
+			this.inputs = [];
+			this.addLabel = $("<label>")
 								.text("Upload another file")
-								.addClass(self.options.html.addLabelClass)
-								.insertAfter(self.$el)
-								.click(self.addFile);
-			self.render();
-        };
-
-		self.render = function(){
-			self.$el.hide();
-			self.addFile();
-			self.hiddenField = $("<input type='hidden'>")
-									.addClass(self.options.hiddenFieldName)
-									.insertBefore(self.$el);
-		};
-		
-		self.canAddFile = function(){
-			return self.options.nextIndex <= self.options.maxNumber;
-		};
-		
-		self.addFile = function(){
-			if(!self.canAddFile()) return false;
+								.addClass(this.options.html.addLabelClass)
+								.insertAfter(this.$el)
+								.click(function(){ self.addFile(); });
+			this.render();
+		},
+		render: function(){
+			this.$el.hide();
+			this.addFile();
+			this.hiddenField = $("<input type='hidden'>")
+									.addClass(this.options.hiddenFieldName)
+									.insertBefore(this.$el);	
+		},
+		canAddFile: function(){
+			return this.options.nextIndex <= this.options.maxNumber;
+		},
+		addFile: function(){
+			if(!this.canAddFile()) return false;
 			
-			var i = self.options.nextIndex;
-			self.addLabel.hide();
-			self.inputs.push($("<input type='file'>")
-								.addClass(self.options.inputClass)
-								.insertBefore(self.$el));
+			var i = this.options.nextIndex,
+				self = this;
+			this.addLabel.hide();
+			this.inputs.push($("<input type='file'>")
+								.addClass(this.options.inputClass)
+								.insertBefore(this.$el)
+								.change(function() { self.onFileSelected(); }));
 													
-			self.options.nextIndex++;
-			if(self.canAddFile()) self.addLabel.show();
+			this.options.nextIndex++;
+			if(this.canAddFile()) this.addLabel.show();
 			
-			return self.inputs[self.inputs.length-1];
-		};
-
-        self.init();
-		return self;
-    };
+			return this.inputs[this.inputs.length-1];
+		},
+		onFileSelected: function(){
+			console.log("file set")
+		}
+    });
 
     $.uploader.defaultOptions = {
 		html: {

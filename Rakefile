@@ -15,5 +15,5 @@ task :build do
 end
 
 task :test do
-  # open qunit in browser
+  # for now, just open qunit in browser
 end

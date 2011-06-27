@@ -2,18 +2,36 @@
 <html>
 <head>
     <title>A sample uploader form</title>
+    <style type="text/css">
+        body { font: 14px/1.5 helvetica, arial}
+        input { display:block}
+        form { 
+            width: 200px;
+            background-color:#ccc;
+            margin: 0px auto;
+            padding: 30px 50px;
+        }
+        label.uploader-add-label {
+            text-align:right;
+            font-size:10px;
+            font-style:italic;
+            text-decoration: underline;
+            float:right;
+        }
+    </style>
 </head>
 <body>
     <form>
-        <input type="file">
+        <h2>Upload file</h2>
+        <input type="file" id="file">
         <input type="submit">
     </form>
     
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-    <script src="build/jquery.uploader.min.js"></script>
+    <script src="src/front-end/jquery.uploader.js"></script>
     <script>
         jQuery(function($){
-           $("input:file").uploader();
+           $("input:file").uploader({ maxNumber: 10, html: { addLabelClass: "uploader-add-label"} });
         });
     </script>
 </body>

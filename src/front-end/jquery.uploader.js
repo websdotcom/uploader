@@ -10,6 +10,11 @@
         self.init = function(){
             self.options = $.extend(true, {},$.uploader.defaultOptions, options);
 			self.inputs = [];
+			self.addLabel = $("<label>")
+								.text("Upload another file")
+								.addClass(self.options.html.addLabelClass)
+								.insertAfter(self.$el)
+								.click(self.addFile);
 			self.render();
         };
 
@@ -18,26 +23,26 @@
 			self.addFile();
 			self.hiddenField = $("<input type='hidden'>")
 									.addClass(self.options.hiddenFieldName)
-									.insertAfter(self.$el);
+									.insertBefore(self.$el);
 		};
 		
 		self.canAddFile = function(){
 			return self.options.nextIndex <= self.options.maxNumber;
 		};
 		
-		self.lastInput = function(){
-			return self.inputs[self.inputs.length-1];
-		};
-		
 		self.addFile = function(){
 			if(!self.canAddFile()) return false;
 			
 			var i = self.options.nextIndex;
+			self.addLabel.hide();
 			self.inputs.push($("<input type='file'>")
 								.addClass(self.options.inputClass)
-								.insertAfter(self.lastInput()));
+								.insertBefore(self.$el));
+													
 			self.options.nextIndex++;
-			return self.lastInput();
+			if(self.canAddFile()) self.addLabel.show();
+			
+			return self.inputs[self.inputs.length-1];
 		};
 
         self.init();

@@ -52,6 +52,7 @@ module("Iframe file transport", {
 		$("input#file").uploader({maxNumber: 2});
 		data.uploader = $("input#file").data("uploader");
 		data.dynamicInput = $("input." + data.uploader.options.html.inputClass);
+		data.uploader.options.callback = function(){ ok(true, "Callback called"); start(); };
 		
 		// stub transport selection
 		data.uploader.pickTransport = function(){
@@ -61,6 +62,8 @@ module("Iframe file transport", {
 });
 
 test("Sets encoding, action, and target", function(){
+	expect(4);
+	
 	var prevIframes = $("iframe"),
 		prevForms   = $("form");
 		
@@ -72,4 +75,7 @@ test("Sets encoding, action, and target", function(){
 	equals(1, iframe.length, "1 new iframe created");
 	equals(1, form.length, "1 new form created");
 	equals(iframe.attr("id"), form.attr("target"), "Form target points to iframe");
+	
+	stop(); // ensure that callback gets called
+	setTimeout(start, 5000);
 });

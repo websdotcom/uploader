@@ -46,3 +46,30 @@ test("UI click event adds another input", function(){
 	equals($("input").length, inputs+1);
 });
 
+module("Iframe file transport", {
+	setup: function(){
+		data = {};
+		$("input#file").uploader({maxNumber: 2});
+		data.uploader = $("input#file").data("uploader");
+		data.dynamicInput = $("input." + data.uploader.options.html.inputClass);
+		
+		// stub transport selection
+		data.uploader.pickTransport = function(){
+			return $.uploader.transports.iframe;
+		};
+	}
+});
+
+test("Sets encoding, action, and target", function(){
+	var prevIframes = $("iframe"),
+		prevForms   = $("form");
+		
+	data.uploader.sendFile(data.dynamicInput);
+	
+	var iframe = $("iframe").not(prevIframes),
+		form   = $("form").not(prevForms);
+		
+	equals(1, iframe.length, "1 new iframe created");
+	equals(1, form.length, "1 new form created");
+	equals(iframe.attr("id"), form.attr("target"), "Form target points to iframe");
+});
